@@ -1,0 +1,72 @@
+API Contract: Device Savings Data API
+
+1. Introduction
+The Device Savings Data API provides access to device savings data, including total carbon savings, total fuel savings, monthly averages, and graph data for a specified time interval. The API allows clients to retrieve this data by making HTTP GET requests with the required parameters.
+
+2. Base URL
+The base URL for accessing the API is: http://localhost:3000/
+
+3. Endpoint
+- Method: GET
+- Path: /
+- Description: Retrieves device savings data based on the provided parameters.
+
+4. Request Parameters
+The following parameters are required in the query string of the GET request:
+- id (string): The ID of the device.
+- startDate (string): The start date of the time interval in the format 'YYYY-MM-DD'.
+- endDate (string): The end date of the time interval in the format 'YYYY-MM-DD'.
+
+Example request:
+GET /?id=device123&startDate=2023-01-01&endDate=2023-12-31
+
+5. Response
+- Content-Type: application/json
+- Response Body:
+{
+  "totalSums": {
+    "totalCarbonSavings": number,
+    "totalFuelSavings": number
+  },
+  "cumulativeAverages": {
+    "averageCarbon": number,
+    "averageFuel": number
+  },
+  "graphInfo": {
+    "graphNumericals": [
+      [string, number, number],
+      ...
+    ],
+    "timeIntervalCarbonAverage": number,
+    "timeIntervalFuelAverage": number
+  }
+}
+- totalSums: An object containing the total carbon savings (in tons) and total fuel savings for the device.
+- cumulativeAverages: An object containing the cumulative averages of carbon savings and fuel savings across all months.
+- graphInfo: An object containing the graph data for the specified time interval.
+  - graphNumericals: An array of tuples representing the graph data points. Each tuple contains the timestamp, carbon savings, and fuel savings.
+  - timeIntervalCarbonAverage: The average carbon savings for the specified time interval in the graph.
+  - timeIntervalFuelAverage: The average fuel savings for the specified time interval in the graph.
+
+6. Error Responses
+- Status Code: 400 Bad Request
+  - Description: One or more required parameters are missing.
+  - Content-Type: text/plain
+  - Response Body: Missing required parameters: id, startDate, endDate
+
+- Status Code: 500 Internal Server Error
+  - Description: An error occurred while reading the CSV file.
+  - Content-Type: text/plain
+  - Response Body: Internal Server Error
+
+7. Data Source
+The API retrieves data from a CSV file named device-saving.csv located in the data directory relative to the API server.
+
+8. Authentication and Authorization
+The API does not require any authentication or authorization mechanisms.
+
+9. Rate Limiting
+There are no specific rate limits enforced by the API.
+
+10. Versioning
+The API does not include versioning in the URL or request headers.
